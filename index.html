@@ -3,180 +3,645 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Will You Be Mine?</title>
-    <!-- Load Tailwind CSS -->
+    <title>A Rose for You 🌹</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom font */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=100..900&display=swap');
+        :root {
+            --rose-deep: #9f1239;
+            --rose-rich: #be123c;
+            --rose-soft: #fb7185;
+            --rose-blush: #fda4af;
+            --cream: #fffbeb;
+            --gold: #d97706;
+            --shadow-intense: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Cormorant Garamond', serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #fce7f3; /* Light Pink Background */
-            overflow: hidden; /* Hide floating hearts outside viewport initially */
+            background: linear-gradient(165deg, 
+                #450a0a 0%, 
+                #7f1d1d 25%, 
+                #991b1b 50%, 
+                #b91c1c 75%, 
+                #dc2626 100%);
+            position: relative;
+            overflow: hidden;
         }
-        
-        /* Animation for the hearts */
-        @keyframes fall {
+
+        /* Animated gradient overlay */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(251, 113, 133, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(159, 18, 57, 0.4) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(220, 38, 38, 0.3) 0%, transparent 50%);
+            animation: gradientShift 15s ease infinite;
+            pointer-events: none;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.9; transform: scale(1.1) rotate(5deg); }
+        }
+
+        /* Grain texture overlay */
+        body::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+            pointer-events: none;
+        }
+
+        .fancy-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .elegant-script {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .small-caps {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-size: 0.75em;
+        }
+
+        /* Rose petal animations */
+        @keyframes petalFall {
             0% {
-                transform: translate(0, -10vh) scale(0);
+                transform: translate(0, -10vh) rotate(0deg) scale(0);
                 opacity: 0;
             }
+            10% {
+                opacity: 1;
+            }
             100% {
-                transform: translate(var(--x), 100vh) scale(1);
-                opacity: var(--o);
+                transform: translate(var(--drift-x), 110vh) rotate(var(--rotate)) scale(1);
+                opacity: 0;
             }
         }
 
-        .heart {
+        @keyframes petalSway {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(var(--sway-amount)) rotate(5deg); }
+            75% { transform: translateX(calc(var(--sway-amount) * -1)) rotate(-5deg); }
+        }
+
+        @keyframes petalSpin {
+            0% { transform: rotateZ(0deg); }
+            100% { transform: rotateZ(360deg); }
+        }
+
+        .rose-petal {
             position: absolute;
-            top: 0;
-            left: var(--r); /* Random horizontal position */
-            color: var(--c); /* Color variable (shades of red/pink) */
-            font-size: var(--s); /* Size variable */
-            animation: fall var(--d) linear infinite; /* Duration variable */
-            pointer-events: none; /* Make hearts unclickable */
+            top: -5vh;
+            left: var(--start-x);
+            font-size: var(--size);
+            animation: 
+                petalFall var(--duration) linear infinite,
+                petalSway var(--sway-duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+            pointer-events: none;
+            filter: drop-shadow(0 4px 8px rgba(159, 18, 57, 0.4));
+            z-index: 1;
+        }
+
+        /* Glowing particles */
+        @keyframes sparkle {
+            0%, 100% { 
+                opacity: 0; 
+                transform: scale(0);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: radial-gradient(circle, #fef3c7 0%, transparent 70%);
+            border-radius: 50%;
+            animation: sparkle var(--sparkle-duration) ease-in-out infinite;
+            animation-delay: var(--sparkle-delay);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Card animations */
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes cardExit {
+            to {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+        }
+
+        #app {
+            animation: cardEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        #app.exiting {
+            animation: cardExit 0.5s cubic-bezier(0.4, 0.0, 1, 1) forwards;
+        }
+
+        /* Input styles */
+        .custom-input {
+            background: rgba(255, 251, 235, 0.95);
+            border: 2px solid var(--rose-blush);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.125rem;
+            letter-spacing: 0.05em;
+        }
+
+        .custom-input:focus {
+            background: rgba(255, 251, 235, 1);
+            border-color: var(--rose-rich);
+            box-shadow: 0 0 0 4px rgba(190, 18, 60, 0.1),
+                        0 10px 25px -5px rgba(159, 18, 57, 0.3);
+            outline: none;
+        }
+
+        .custom-input::placeholder {
+            color: rgba(159, 18, 57, 0.4);
+            font-style: italic;
+        }
+
+        /* Button styles */
+        .rose-button {
+            background: linear-gradient(135deg, var(--rose-rich) 0%, var(--rose-deep) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px -5px rgba(159, 18, 57, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .rose-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .rose-button:hover::before {
+            transform: translateX(100%);
+        }
+
+        .rose-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px -5px rgba(159, 18, 57, 0.6),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .rose-button:active {
+            transform: translateY(0);
+        }
+
+        /* Heartbeat animation */
+        @keyframes heartbeat {
+            0%, 100% { 
+                transform: scale(1);
+            }
+            10% { 
+                transform: scale(1.1);
+            }
+            20% { 
+                transform: scale(1);
+            }
+            30% { 
+                transform: scale(1.15);
+            }
+            40% { 
+                transform: scale(1);
+            }
+        }
+
+        .heart-pulse {
+            animation: heartbeat 2.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.6));
+        }
+
+        /* Love screen entrance */
+        @keyframes loveScreenEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.9) rotateY(20deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateY(0deg);
+            }
+        }
+
+        #love-screen.active {
+            animation: loveScreenEntrance 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Rose bouquet animation */
+        @keyframes bouquetBloom {
+            0% {
+                transform: scale(0.5) translateY(50px) rotate(-20deg);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.1) translateY(-10px) rotate(5deg);
+            }
+            100% {
+                transform: scale(1) translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .bouquet {
+            animation: bouquetBloom 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            filter: drop-shadow(0 10px 30px rgba(159, 18, 57, 0.4));
+        }
+
+        /* Text reveal animations */
+        @keyframes textReveal {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .text-reveal {
+            animation: textReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            opacity: 0;
+        }
+
+        .text-reveal-1 { animation-delay: 0.3s; }
+        .text-reveal-2 { animation-delay: 0.5s; }
+        .text-reveal-3 { animation-delay: 0.7s; }
+        .text-reveal-4 { animation-delay: 0.9s; }
+        .text-reveal-5 { animation-delay: 1.1s; }
+
+        /* Shimmer text effect */
+        @keyframes shimmer {
+            0% {
+                background-position: -500px 0;
+            }
+            100% {
+                background-position: 500px 0;
+            }
+        }
+
+        .shimmer-text {
+            background: linear-gradient(90deg, 
+                var(--gold) 0%, 
+                #fbbf24 25%, 
+                #fef3c7 50%, 
+                #fbbf24 75%, 
+                var(--gold) 100%);
+            background-size: 500px 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+
+        /* Decorative ornaments */
+        .ornament {
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--rose-blush) 50%, 
+                transparent 100%);
+            position: relative;
+        }
+
+        .ornament::before,
+        .ornament::after {
+            content: '❈';
+            position: absolute;
+            color: var(--rose-soft);
+            font-size: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .ornament::before {
+            left: -15px;
+        }
+
+        .ornament::after {
+            right: -15px;
+        }
+
+        /* Error shake animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .shake {
+            animation: shake 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Glass morphism card */
+        .glass-card {
+            background: rgba(255, 251, 235, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: var(--shadow-intense),
+                        0 0 60px rgba(159, 18, 57, 0.2);
         }
     </style>
 </head>
 <body>
+    <!-- Sparkle container -->
+    <div id="sparkle-container"></div>
 
-    <!-- Main Application Container (FIX: Added 'relative z-10' to ensure it's on top of the heart container) -->
-    <div id="app" class="w-full max-w-md p-6 sm:p-8 bg-white shadow-2xl rounded-xl transition-all duration-500 mx-4 relative z-10">
+    <!-- Rose petal container -->
+    <div id="petal-container"></div>
+
+    <!-- Main App Container -->
+    <div id="app" class="w-full max-w-lg mx-4 relative z-10">
         
-        <!-- Screen 1: Name Input -->
-        <div id="name-screen" class="text-center">
-            <h1 class="text-3xl font-bold mb-4 text-pink-600">A Simple Question...</h1>
-            <p class="text-gray-600 mb-6">What is my Baby's name ?</p>
-            
-            <div class="space-y-4">
-                <input type="text" id="name-input" placeholder="Type the name here..." class="w-full p-3 border-2 border-pink-300 rounded-lg focus:ring-pink-500 focus:border-pink-500 transition duration-300 outline-none">
+        <!-- Name Input Screen -->
+        <div id="name-screen" class="glass-card rounded-3xl p-10 sm:p-12 transition-all duration-500">
+            <!-- Rose icon -->
+            <div class="text-center mb-6">
+                <div class="text-7xl mb-4 inline-block transform hover:scale-110 transition-transform duration-300">🌹</div>
+                <div class="ornament mx-auto mb-6"></div>
+            </div>
+
+            <!-- Title -->
+            <h1 class="fancy-title text-5xl sm:text-6xl text-center mb-3 text-rose-900 leading-tight">
+                Rose Day
+            </h1>
+            <p class="small-caps text-center text-rose-700 mb-6">
+                February 7th, 2025
+            </p>
+
+            <!-- Subtitle -->
+            <p class="elegant-script text-xl sm:text-2xl text-center text-rose-800 mb-8">
+                A single rose for the one who holds my heart
+            </p>
+
+            <div class="space-y-5">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="name-input" 
+                        placeholder="Whisper the secret name..."
+                        class="custom-input w-full px-6 py-4 rounded-2xl text-center"
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                </div>
                 
-                <button id="submit-button" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:scale-[1.01] active:scale-95">
-                    Unlock the Magic
+                <button id="submit-button" class="rose-button w-full py-4 rounded-2xl text-white font-bold text-sm">
+                    <span class="relative z-10">Unveil My Heart</span>
                 </button>
             </div>
             
-            <p id="error-message" class="mt-4 text-red-500 font-medium opacity-0 transition-opacity duration-300">
-                This is for my Baby only.
-            </p>
+            <div id="error-container" class="mt-6 opacity-0 transition-opacity duration-300">
+                <p class="text-rose-600 font-medium text-center bg-rose-50/80 py-3 px-5 rounded-xl border border-rose-200">
+                    <span class="elegant-script text-lg">This rose blooms for one soul alone</span>
+                </p>
+            </div>
         </div>
 
-        <!-- Screen 2: Love Theme (Hidden by default) -->
-        <div id="love-screen" class="hidden text-center transition-opacity duration-1000 p-8">
-            <h1 class="text-5xl font-extrabold mb-4 text-red-600 animate-pulse">My Dearest Love,</h1>
-            <p class="text-xl text-pink-700 mb-8">
-                I will miss the smile you put on your face after seeing this baby but remember i am always with you and i will love you forever
-            </p>
-            <div class="text-7xl mb-8">
-                ❤️
+        <!-- Love Message Screen -->
+        <div id="love-screen" class="glass-card rounded-3xl p-10 sm:p-12 hidden">
+            <!-- Rose bouquet -->
+            <div class="text-center mb-8">
+                <div class="bouquet text-8xl mb-6 inline-block">
+                    🌹🌹🌹
+                </div>
+                <div class="ornament mx-auto"></div>
             </div>
-            <p class="text-gray-600 italic">
-                (I love you forever my Baby!)
-            </p>
+
+            <!-- Main title -->
+            <h1 class="fancy-title text-5xl sm:text-6xl text-center mb-8 text-rose-900 text-reveal text-reveal-1">
+                For My <span class="shimmer-text">Beloved</span> Aarzu
+            </h1>
+
+            <!-- Message card -->
+            <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-rose-200/50 shadow-lg text-reveal text-reveal-2">
+                <p class="text-xl sm:text-2xl text-rose-900 mb-6 leading-relaxed text-center elegant-script">
+                    On this Rose Day, every petal that falls carries a thousand unspoken words of love...
+                </p>
+                
+                <div class="h-px bg-gradient-to-r from-transparent via-rose-300 to-transparent my-6"></div>
+                
+                <p class="text-lg text-rose-800 mb-4 leading-relaxed">
+                    Though miles may separate us, my heart remains forever intertwined with yours. Each rose that dances through the sky is a reminder that love transcends distance, time, and space.
+                </p>
+                
+                <p class="text-lg text-rose-800 leading-relaxed">
+                    I cherish the smile that lights up your face, the warmth of your presence, and the endless joy you bring to my world. You are my today and all of my tomorrows.
+                </p>
+            </div>
+
+            <!-- Heart -->
+            <div class="text-center mb-8 text-reveal text-reveal-3">
+                <div class="heart-pulse text-8xl inline-block">
+                    ❤️
+                </div>
+            </div>
+
+            <!-- Final message -->
+            <div class="text-center text-reveal text-reveal-4">
+                <div class="bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-6 border-2 border-rose-300/50 shadow-inner">
+                    <p class="fancy-title text-3xl sm:text-4xl text-rose-900 mb-3">
+                        Forever Yours
+                    </p>
+                    <p class="text-rose-700 text-lg elegant-script">
+                        Today, tomorrow, and all the days that follow
+                    </p>
+                    <div class="mt-4 text-sm small-caps text-rose-600">
+                        Happy Rose Day, My Baby
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Heart Container for floating hearts -->
-    <div id="heart-container" class="absolute inset-0 z-0"></div>
-
     <script>
-        // --- Configuration ---
-        const CORRECT_NAME = "aarzu"; // <<< CHANGE THIS SECRET NAME!
-        const HEART_COUNT = 50; // Number of hearts to generate
-
-        // --- DOM Elements ---
-        const nameScreen = document.getElementById('name-screen');
-        const loveScreen = document.getElementById('love-screen');
-        const nameInput = document.getElementById('name-input');
-        const submitButton = document.getElementById('submit-button');
-        const errorMessage = document.getElementById('error-message');
-        const heartContainer = document.getElementById('heart-container');
-
-        // --- Heart Generation Logic ---
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.textContent = '❤️'; // Unicode heart emoji
-
-            // Random properties for unique animation
-            const duration = (Math.random() * 10) + 5; // 5 to 15 seconds
-            const opacity = (Math.random() * 0.4) + 0.6; // 0.6 to 1.0 opacity
-            const size = (Math.random() * 30) + 15; // 15px to 45px
-            const initialLeft = Math.random() * 100; // 0% to 100% from left
-            const travelX = (Math.random() * 60) - 30; // -30vw to +30vw drift
-            const color = Math.random() > 0.5 ? '#f43f5e' : '#ec4899'; // Pink or Rose-Red
-
-            heart.style.setProperty('--r', `${initialLeft}vw`);
-            heart.style.setProperty('--d', `${duration}s`);
-            heart.style.setProperty('--o', opacity);
-            heart.style.setProperty('--s', `${size}px`);
-            heart.style.setProperty('--x', `${travelX}vw`);
-            heart.style.setProperty('--c', color);
-
-            // Give a random initial delay so they don't all start at once
-            heart.style.animationDelay = `-${Math.random() * duration}s`;
-
-            heartContainer.appendChild(heart);
-        }
-
-        function generateHearts() {
-            // Generate many hearts for the love theme
-            for (let i = 0; i < HEART_COUNT; i++) {
-                createHeart();
-            }
-        }
-
-
-        // --- Authentication & View Switching Logic ---
-        function handleSubmit() {
-            const enteredName = nameInput.value.trim();
-            
-            // Check if the entered name matches the secret name (case-insensitive)
-            if (enteredName.toLowerCase() === CORRECT_NAME.toLowerCase()) {
-                // Success: Switch to the love screen
-                nameScreen.classList.add('hidden');
-                loveScreen.classList.remove('hidden');
-                
-                // Remove the app container shadow/padding for a full-screen effect
-                document.getElementById('app').classList.remove('shadow-2xl', 'bg-white', 'p-6', 'sm:p-8');
-                document.getElementById('app').classList.add('bg-transparent', 'max-w-full');
-                
-                // Start the heart animation
-                generateHearts();
-            } else {
-                // Failure: Show error message briefly
-                errorMessage.classList.remove('opacity-0');
-                nameInput.classList.add('border-red-500');
-
-                // Clear input field on error
-                nameInput.value = '';
-
-                setTimeout(() => {
-                    errorMessage.classList.add('opacity-0');
-                    nameInput.classList.remove('border-red-500');
-                    nameInput.classList.add('border-pink-300'); // Restore original border color
-                }, 2000);
-            }
-        }
-
-        // --- Event Listeners ---
-        submitButton.addEventListener('click', handleSubmit);
-        nameInput.addEventListener('keypress', function (e) {
-            // Check for Enter key press
-            if (e.key === 'Enter') {
-                handleSubmit();
-            }
-        });
-        
-        // Focus on the input field when the page loads
-        window.onload = () => {
-             nameInput.focus();
+        // ===== CONFIGURATION =====
+        const CONFIG = {
+            secretName: 'aarzu',
+            petalCount: 80,
+            petalInterval: 200, // ms between new petals
+            sparkleCount: 50
         };
 
+        // ===== DOM ELEMENTS =====
+        const elements = {
+            app: document.getElementById('app'),
+            nameScreen: document.getElementById('name-screen'),
+            loveScreen: document.getElementById('love-screen'),
+            nameInput: document.getElementById('name-input'),
+            submitButton: document.getElementById('submit-button'),
+            errorContainer: document.getElementById('error-container'),
+            petalContainer: document.getElementById('petal-container'),
+            sparkleContainer: document.getElementById('sparkle-container')
+        };
+
+        // ===== ROSE PETAL GENERATION =====
+        function createRosePetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('rose-petal');
+            petal.textContent = '🌹';
+
+            // Random animation properties
+            const duration = 8 + Math.random() * 10; // 8-18s
+            const size = 25 + Math.random() * 40; // 25-65px
+            const startX = Math.random() * 100; // 0-100vw
+            const driftX = (Math.random() * 100) - 50; // -50 to +50vw
+            const rotation = Math.random() * 720; // 0-720deg
+            const swayDuration = 2 + Math.random() * 3; // 2-5s
+            const swayAmount = (Math.random() * 40) - 20; // -20 to +20px
+            const delay = Math.random() * -duration; // Stagger start
+
+            petal.style.setProperty('--start-x', `${startX}vw`);
+            petal.style.setProperty('--duration', `${duration}s`);
+            petal.style.setProperty('--size', `${size}px`);
+            petal.style.setProperty('--drift-x', `${driftX}vw`);
+            petal.style.setProperty('--rotate', `${rotation}deg`);
+            petal.style.setProperty('--sway-duration', `${swayDuration}s`);
+            petal.style.setProperty('--sway-amount', `${swayAmount}px`);
+            petal.style.setProperty('--delay', `${delay}s`);
+
+            elements.petalContainer.appendChild(petal);
+
+            // Remove petal after animation completes to prevent memory leak
+            setTimeout(() => {
+                petal.remove();
+            }, duration * 1000);
+        }
+
+        function initializePetals() {
+            // Create initial batch
+            for (let i = 0; i < CONFIG.petalCount; i++) {
+                createRosePetal();
+            }
+        }
+
+        function startInfinitePetals() {
+            setInterval(createRosePetal, CONFIG.petalInterval);
+        }
+
+        // ===== SPARKLE GENERATION =====
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            const duration = 1 + Math.random() * 2;
+            const delay = Math.random() * 3;
+
+            sparkle.style.left = `${x}vw`;
+            sparkle.style.top = `${y}vh`;
+            sparkle.style.setProperty('--sparkle-duration', `${duration}s`);
+            sparkle.style.setProperty('--sparkle-delay', `${delay}s`);
+
+            elements.sparkleContainer.appendChild(sparkle);
+        }
+
+        function initializeSparkles() {
+            for (let i = 0; i < CONFIG.sparkleCount; i++) {
+                createSparkle();
+            }
+        }
+
+        // ===== FORM HANDLING =====
+        function handleSubmit() {
+            const enteredName = elements.nameInput.value.trim();
+            
+            if (enteredName.toLowerCase() === CONFIG.secretName.toLowerCase()) {
+                // Success - transition to love screen
+                elements.app.classList.add('exiting');
+                
+                setTimeout(() => {
+                    elements.nameScreen.classList.add('hidden');
+                    elements.loveScreen.classList.remove('hidden');
+                    elements.loveScreen.classList.add('active');
+                    elements.app.classList.remove('exiting');
+                }, 500);
+
+            } else {
+                // Error feedback
+                elements.errorContainer.classList.remove('opacity-0');
+                elements.nameInput.classList.add('shake', 'border-rose-500', 'bg-rose-50/50');
+                elements.nameInput.value = '';
+                
+                setTimeout(() => {
+                    elements.nameInput.classList.remove('shake');
+                }, 400);
+
+                setTimeout(() => {
+                    elements.errorContainer.classList.add('opacity-0');
+                    elements.nameInput.classList.remove('border-rose-500', 'bg-rose-50/50');
+                }, 2500);
+            }
+        }
+
+        // ===== EVENT LISTENERS =====
+        elements.submitButton.addEventListener('click', handleSubmit);
+        elements.nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSubmit();
+        });
+
+        // ===== INITIALIZATION =====
+        window.addEventListener('DOMContentLoaded', () => {
+            elements.nameInput.focus();
+            initializePetals();
+            startInfinitePetals();
+            initializeSparkles();
+        });
     </script>
 </body>
 </html>
