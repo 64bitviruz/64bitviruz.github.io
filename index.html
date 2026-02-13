@@ -521,10 +521,10 @@ const btnNo = document.getElementById('btn-no');
 
 const labels = [
   'No 🙈',
-  'Nope! 😏',
-  'Still no… 😅',
-  'Really?? 🥺',
-  'Come on!! 😭',
+  'Hora testo 😏',
+  'bro really 😏',
+  'thikai xa sathi',
+  'i know tmro man le k vanxa hehe🙈',
   'Okay fine… 💕'
 ];
 
@@ -536,13 +536,30 @@ function getRandomPosition() {
   const bh = btnNo.offsetHeight || 48;
   const maxX = window.innerWidth  - bw  - margin;
   const maxY = window.innerHeight - bh  - margin;
-  // avoid landing directly on the YES button
-  let rx, ry, attempts = 0;
-  do {
-    rx = Math.random() * maxX + margin/2;
-    ry = Math.random() * maxY + margin/2;
-    attempts++;
-  } while(attempts < 10 && rx > window.innerWidth/2 - 100 && ry > window.innerHeight/2 - 60);
+
+  // start with a random point
+  let rx = Math.random() * maxX + margin/2;
+  let ry = Math.random() * maxY + margin/2;
+
+  // gently nudge away from the YES button if too close
+  const yesBtn = document.getElementById('btn-yes');
+  if(yesBtn) {
+    const yesRect = yesBtn.getBoundingClientRect();
+    const cx = yesRect.left + yesRect.width/2;
+    const cy = yesRect.top  + yesRect.height/2;
+    const avoidRadius = 160;
+    const dist = Math.hypot(rx - cx, ry - cy);
+    if(dist < avoidRadius) {
+      // move to the opposite side of the yes button centre
+      const angle = Math.atan2(ry - cy, rx - cx);
+      rx = cx + Math.cos(angle) * (avoidRadius + 20);
+      ry = cy + Math.sin(angle) * (avoidRadius + 20);
+      // clamp inside viewport bounds
+      rx = Math.min(Math.max(rx, margin/2), maxX);
+      ry = Math.min(Math.max(ry, margin/2), maxY);
+    }
+  }
+
   return { x: rx, y: ry };
 }
 
