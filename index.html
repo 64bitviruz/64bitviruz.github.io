@@ -273,6 +273,8 @@ html,body{
   width:100%;height:100%;
   object-fit:cover;
   display:block;
+  /* move image up slightly */
+  transform: translateY(-60px);
 }
 
 /* Dummy placeholder svg (delete this once you add a real photo) */
@@ -426,13 +428,13 @@ html,body{
     <div style="position:relative">
       <div class="photo-frame" id="photo-frame">
 
-        <!-- ★ REPLACE THIS IMAGE ★
+      
              Change src to your photo path or URL.
-             e.g.  src="photo.jpg"
-                   src="https://example.com/her.jpg"
-        -->
+             e.g.  src="bbuy.jpeg"
+                   src="https://raw.githubusercontent.com/64bitviruz/64bitviruz.github.io/refs/heads/main/bbuy.jpeg"
+       
         <img
-          src=""
+          src="https://raw.githubusercontent.com/64bitviruz/64bitviruz.github.io/refs/heads/main/bbuy.jpeg"
           alt="My Valentine"
           id="valentine-photo"
           onerror="showPlaceholder()"
